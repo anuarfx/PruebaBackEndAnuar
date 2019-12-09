@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- esta pagina web es el index donde nos muestra una tabla con todos los registros 
+   y la opcion de cambiar el estado del registro y mas abajo esta un codigo en javascript
+   para poder obtener todos los valores de los checkbox seleccionados y enviarlos al controllador 
+   para actualizar el estado del registro 
+  -->
+<!-- Bootstrap CSS -->
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+	crossorigin="anonymous">
+
+<title>Anuar Saballeth</title>
+</head>
+<body>
+	<!-- As a link -->
+	<nav class="navbar navbar-light bg-light">
+		<a class="navbar-brand" href="#">Anuar Saballeth</a>
+	</nav>
+
+	<div class="container">
+		<div class="row m-5 ">
+			<div class="col-6 text-center">
+				<div class="container">
+					<a href="/crearusuario" class="btn btn-success">Crear Nuevo
+						Usuario</a>
+				</div>
+			</div>
+			<div class="col-6 text-center">
+				<div class="container">
+					<a class="btn btn-info procesar">Procesar</a>
+				</div>
+			</div>
+		</div>
+		<div class="row m-5 justify-content-center">
+			<div class="col-8">
+				<table class="table">
+					<thead class="thead-dark">
+						<tr>
+							<th scope="col">#</th>
+							<th scope="col">Nombre</th>
+							<th scope="col">Apellido</th>
+							<th scope="col">Estado</th>
+							<th scope="col">Seleccionar</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="usuario :${usuarios}">
+							<td th:text="${usuario.id}" scope="row"></td>
+							<td th:text="${usuario.nombre}"></td>
+							<td th:text="${usuario.apellido}"></td>
+							<td
+								th:text="${usuario.procesado == false}?'No Procesado':'Procesado'"></td>
+							<td><input type="checkbox" th:id="${usuario.id}"
+								class="checkprocesado" th:checked="${usuario.procesado}"></td>
+						</tr>
+
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<!-- Optional JavaScript -->
+	<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js"
+		integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+		crossorigin="anonymous"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+		integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+		integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+		crossorigin="anonymous"></script>
+	<script type="text/javascript">
+		$('.procesar').click(function() {
+			var $checks = $('.checkprocesado');
+			var ArrayData = [];
+			if ($checks.length > 0) {
+				$checks.each(function(i, value) {
+					var data = {};
+					if (this.checked) {
+						data.id = value.id;
+						data.procesado = true;
+						ArrayData.push(data);
+					} else {
+						data.id = value.id;
+						data.procesado = false;
+						ArrayData.push(data);
+					}
+					
+					
+				});
+				$.ajax({
+					url : "/procesarusuario",
+					type : 'POST',
+					headers:{'Content-Type':'application/json','Accept':'application/json'},
+					data:JSON.stringify(ArrayData),
+					success : function(data) {
+						window.location.href = "/";
+					},
+					error : function(error) {
+						console.log(error);
+					}
+				});
+			} else {
+				alert("Para Procesar debe Seleccionar un Registro");
+			}
+
+		});
+	</script>
+</body>
+</html>
